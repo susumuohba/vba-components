@@ -8,6 +8,7 @@ A collection of VBA components and snippets for numerical computation and busine
 - `math/Fraction.cls` （分数クラス・自動約分・四則演算対応）
 - `math/TestFraction.bas` （分数クラスのテスト用モジュール）
 - `testing/modAssert.bas` （自作の軽量単体テストフレームワーク。アドイン不要でモジュールをコピーするだけで動作。`AssertEqual` / `AssertTrue` / `AssertFalse` 等を提供し、結果はイミディエイトウィンドウに出力）
+- `logging/` （しきい値方式でレベル制御できる、ファイル出力型の軽量ロガー一式。詳細は下記「Logging」参照）
 - `business/aggregate-workbooks/` （フォルダ内の複数Excelブックを1冊に自動集計するツール一式。詳細は下記「Business Tools」参照）
 - `business/`配下は今後追加予定
 
@@ -33,6 +34,21 @@ Sub TestFraction()
     Debug.Print f1.ToString() & " + " & f2.ToString() & " = " & ans.ToString()
 End Sub
 ```
+
+## Logging
+
+### modLogger
+
+レベル（DEBUG/INFO/WARN/ERROR）としきい値による出力制御ができる、ファイル出力専用の軽量ロガーです。
+
+- しきい値方式：`Logger.Threshold`に設定したレベル以上のログのみファイルに出力（実行時に変更可能、既定はDEBUG＝すべて出力）
+- 出力はファイル固定・常に追記モード（既定は呼び出し元ブックと同じフォルダの`log.txt`）
+- フォーマットは「日時＋レベル＋呼び出し元モジュール名＋メッセージ」（モジュール名は呼び出し側が明示的に渡す仕様。VBAの制約上、自動取得はできません）
+- ログ組み立て部分（`BuildLogLine`）とファイル書き込み部分を分離した、テストしやすい設計
+- 単体テストコード付き（`testing/modAssert.bas`を使用、5件の自動テストを収録）
+- 仕様書（動作環境・公開インターフェース・制約事項・テストケース一覧）を同梱（`logging/docs/Logger_仕様書.docx`）
+
+使い方: `modLogger.bas`を対象ブックにインポートし、`Logger.Write "呼び出し元モジュール名", LogLevel.LogInfo, "メッセージ"`のように呼び出します。詳細は同梱のドキュメントを参照してください。
 
 ## Business Tools
 
